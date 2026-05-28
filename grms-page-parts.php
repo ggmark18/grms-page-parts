@@ -191,8 +191,9 @@ function grms_send_mail_smtp($phpmailer)
         $phpmailer->Port = $smtp_options['port'];                 //SMTPポート番号(ssl:465 tls:587)
         $phpmailer->Username = $smtp_options['username'];;        //ユーザー名
         $phpmailer->Password = $smtp_options['password'];   //パスワード
-        $phpmailer->From = $smtp_options['from'];    //送信者メールアドレス
-        error_log($phpmailer->From);
+        if( !$phpmailer->From ) {
+                $phpmailer->From = $smtp_options['from'];    //送信者メールアドレス
+        }
         //  $phpmailer->SMTPDebug = 2;                //デバッグ表示
     }
 }
