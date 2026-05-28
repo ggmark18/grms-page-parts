@@ -1,0 +1,575 @@
+.grms_h1_title {
+    border-left: solid 8px #00552e;
+}
+
+.grms_h1_title span {
+    padding: 0 20px 0 10px !important;
+    border-bottom: solid 1px #00552e;
+}
+
+.grms_h2_title {
+    border-left: solid 4px #00552e;
+}
+
+.grms_h2_title span {
+    font-size: 17pt;
+    padding: 0 15px 0 10px !important;
+    border-bottom: solid 1px #00552e;
+}
+
+.grms-expand-div {
+    margin: 0 -73px;
+}
+
+.col-borth {
+    min-width: 300px;
+    overflow:auto;
+}
+
+#val_birth_year {
+    width: 140px;
+}
+#val_birth_month {
+    min-width: 55px;
+}
+#val_birth_day {
+    min-width: 60px;
+}
+
+
+.col-address {
+    margin-top: -10px !important;
+}
+
+#val_address_label {
+    display: none;
+}
+#val_address {
+
+    margin-left: -5px;
+}
+.address-group {
+    margin-left: 70px;
+    flex-wrap: nowrap !important;
+}
+
+.postcode-row {
+    flex-direction: column;
+}
+
+.email-row {
+    margin-top: 23px !important; 
+}
+
+.col-birth-year {
+    width: 140px;
+}
+.col-birth-month {
+    width: 50px;
+}
+.col-birth-day {
+    width: 50px;
+}
+
+.top-modal {
+    z-index: 9999 !important;
+}
+
+h3.modal-title {
+    margin: 1rem 2rem !important;
+}
+
+.modal-title{
+    padding-left: 2rem;
+}
+.modal-body p {
+    padding-left: 2rem;
+}
+
+#ndi-cf-postcode {
+    font-size: 11px;
+}
+
+.form-control-plaintext {
+    border: solid 1px rgb(226, 229, 232) !important;
+    border-radius: 1px;
+}
+
+.category-side-menu {
+	background-color: transparent;
+	border: 0;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	color: #222;
+	font-size: 15px;
+	font-weight: 800;
+	line-height: 1.5;
+	text-shadow: none;
+    cursor: pointer;
+	float: right;
+	margin-top: -45px;
+	z-index: 999;
+	text-align: center;
+	line-height: 40px;
+	width: auto;
+}
+
+#val_postcode {
+    max-width: 130px;
+}
+
+input.form-control {
+    font-size: 11pt;
+}
+
+#val_comment.form-control {
+    font-size: 11pt;
+}
+
+.static-link-area {
+    border: solid 0.5px rgb(226, 229, 232);
+    padding: 0 3px 5px 3px;
+}
+
+.gifunet-newsletter-img {
+    height: 49px;
+    float: left;
+    margin: 0 20px;
+}
+
+.newsletter-content li{
+    margin: 0 0 !important;
+}
+
+.newsletter-admin-content ul {
+    margin: 0 0 !important;
+}
+
+.newsletter-img {
+    margin: 0 0;
+    padding: 40px 0 0 0 !important;
+}
+
+.newsletter-title {
+    margin-top: 0px !important;
+}
+.newsletter-backnumber-title {
+    margin: 0 0 20px 0;
+    width: 100%;
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+}
+
+.newsletter-pdf-icon {
+    margin-left: 240px;
+    margin-top: -30px;
+}
+
+.grms-member-header {
+    padding: 2px 12px;
+    font-size: 11pt;
+    background-color: #CCC;
+}
+.grms-member-col {
+    padding: 2px 12px;
+    font-size: 11pt;
+}
+
+.grms-member-col-title {
+    width: 120px;
+}
+.grms-member-col-name {
+    width: 120px;
+}
+.grms-member-col-hometown {
+    width: 120px;
+}
+.grms-active-posts {
+    padding: 0;
+}
+
+@media screen and (min-width : 640px) { /* デスクトップ用CSS */
+    .multi-row {
+        display:flex;
+    }
+    .postcode-row {
+        display: grid;
+        grid-template-columns: 125px 1fr;
+    }
+    #val_address_label {
+        display: block;
+    }
+    
+    .col-address {
+        margin-top: 10px !important;
+    }
+    .grms-active-posts {
+        padding-left: 10px;
+    }
+    .email-row {
+        margin-top: 10px !important; 
+    }
+
+    #val_address {
+        margin-left: 0;
+    }
+
+    #ndi-address {
+        margin-top: -32px;
+    }
+    #val_postcode {
+        max-width: none;
+    }
+
+    .col-sidebar-static-title {
+        padding: 3px 5px;
+     }
+    
+
+
+    .grms-active-thumbnail-near,
+    .grms-active-thumbnail
+    {
+        display: block;
+        padding: 0 !important;
+        width: 25%;
+    }
+    
+    .side-bar-margin,
+    .side-bar-margin-category
+    {
+        height: 0px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+
+    .grms-category-col {
+        float: left;
+        width: -webkit-calc(97.4% - 250px) !important;
+        width: -moz-calc(97.4% - 250px) !important;
+        width: calc(97.4% - 250px) !important;
+    }
+
+    .grms-category-sidebar {
+        float: right;
+        margin-top: 50px;
+        width: 250px !important;
+        border: solid 0.8px rgb(200, 200, 200);
+
+        border-radius: 8px ;
+        background-color: #e6ead0;
+    }
+
+    .grms-col-main {
+        float: left;
+        width: -webkit-calc(97.4% - 270px) !important;
+        width: -moz-calc(97.4% - 270px) !important;
+        width: calc(97.4% - 270px) !important;
+    }
+    .grms-col-sidebar {
+        float: right;
+        width: 270px !important;
+    }
+
+    
+}
+@media screen and (max-width: 992px) {
+  .side-bar-margin-category {
+      height: 90px;
+  }    
+}
+@media screen and (max-width: 640px) {
+  .grms-member-table {
+      width: 100%;
+  }
+  .grms-member-header-row {
+      display: none;
+  }
+  .grms-member-table tr {
+    width: 100%;
+  }
+  .grms-member-table td {
+    display: block;
+    width: 100%;
+  }
+  .grms-member-table td:first-child {
+    background: #e9727e;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+  }
+  .grms-member-table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .header-logo img {
+      max-width : -webkit-calc(100% - 40px) ;
+      max-width : calc(100% - 40px) ;
+  }
+
+  .grms-active-thumbnail {
+      display: none;
+  }
+  .grms-active-thumbnail-near {
+      display: block;
+      margin-top: 5px;
+      padding: 0 0 0 15px;
+  }
+  .grms-active-post {
+      width: 100% !important;
+  }
+  .side-bar-margin {
+      height: 50px;
+  }
+  .grms-active-shops__header-title {
+      margin-right: -180px !important;
+      padding-right: 180px !important;
+  }
+  .grms-active-shops__header-city {
+      font-size: 14px;
+      width: 80px !important;
+  }
+  .grms-active-shops__header-rating {
+      font-size: 12px;
+      width: 100px;
+  }
+}
+
+
+}
+.argicle-body-grms {
+    padding: 0px;
+}
+.grms-active-article {
+    margin-top: 8px;
+    border-bottom: solid 1px #aaa;
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+.grms-active-article .event-date{
+    margin-left: -12pt;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.grms-event-category {
+    height: 20px;
+}
+
+.grms-category-title {
+    position: absolute;
+    top: 0;
+
+    margin-top: 0;
+    padding: 2px 5px;
+    font-size: 13px;
+    background-color: rgb(0, 85, 46);
+    color: white;
+}
+
+.grms-event-today {
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+.grms-event-month {
+    margin: 20px -15px 0 -15px;
+    padding: 2px 15px;
+    font-size: 18pt;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(0, 85, 46);
+}
+
+.grms-todays-event {
+    margin-top: -40px;
+    font-size: 15pt;
+    font-weight: bold;
+    color: red;
+}
+
+.grms-active-posts__header .event-date {
+    font-size: 14pt;
+    font-weight: bold;
+}
+.grms-active-posts__title {
+    padding: 0 0 0 10px;
+}
+
+.grms-active-posts__title .all-title{
+    color: #222 !important;
+}
+
+.grms-active-posts__header {
+    overflow: hidden;
+}
+.grms-active-posts__header-title {
+    float: left;
+    width: 100%;
+    margin-right: -120px;
+    padding-right: 120px;
+    box-sizing: border-box;
+    margin-bottom: 25px;
+}
+
+.grms-active-shops__header-title {
+    float: left;
+    width: 100%;
+    padding-left: 10px;
+    margin-right: -200px;
+    padding-right: 200px;
+    box-sizing: border-box;
+}
+.grms-active-shops__header-city {
+    text-align: right;
+    float: right;
+    width: 100px;
+}
+.grms-active-shops__header-rating {
+    text-align: right;
+    float: right;
+    width: 100px;
+}
+
+.fa.fa-star.grms-rating {
+    margin: 0 1px;
+    color: orange !important;
+}
+
+.grms-active-posts__header-date {
+    float: right;
+    width: 120px;
+    padding: 0;
+    text-align: right;
+    font-size: 10pt;
+}
+.grms-active-posts__header-title-date {
+    margin-right: -20px;
+}
+.grms-active-posts__header .cat-title{
+    color: #222 !important;
+}
+
+.grms-active-posts__header .event-title{
+   text-align: right;
+}
+.grms-active-posts__content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10pt;
+    margin-bottom: 0;
+    padding-left: 10px;
+}
+
+.grms-shop-header {
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+.grms-shop-city {
+    font-size: 16px;
+    padding: 0px 20px 0 0;
+    text-align: right;
+    float: right;
+    width: 150px;
+}
+.grms-shop-rating {
+    font-size: 16px;
+    padding-left: 20px;
+    text-align: left;
+    float: left;
+    width: 120px;
+}
+.grms-shop-info {
+    margin-top: 20px;
+}
+.grms-shop-info td {
+    font-size: 16px;
+}
+.grms-category-sidebar {
+    width: 100%;
+    border: solid 0.8px rgb(200, 200, 200);
+    border-radius: 8px ;
+    background-color: #e6ead0;
+    padding: 10px 5px !important;
+}
+
+.static-link-list {
+    position:relative;
+    background-color: white;
+    border: solid 0.5px rgb(226, 229, 232);
+    padding: 5px 15px;
+    height: 30px;
+}
+.static-link-list a {
+    position:absolute;
+    padding-left: 10px;
+    top: 2px;
+    left: 2px;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+.static-link-list:hover {
+    filter:alpha(opacity=70);/* IE 6,7*/
+    -ms-filter: "alpha(opacity=70)";/* IE 8,9 */
+    -moz-opacity:0.7;/* FF , Netscape */
+    -khtml-opacity: 0.7;/* Safari 1.x */
+    opacity:0.7;
+    zoom:1;/*IE*/    
+    background-color: #eee;
+}
+
+.grms-display-none {
+    display: none;
+}
+
+.grms-committee {
+}
+
+.grms-committee-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #888;
+    border-bottom: solid 1px #b3d465;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.grms-committee .grms-group {
+    overflow: hidden;
+}
+
+.grms-committee .grms-title {
+    float: left;
+    width: 70px;
+    padding-left: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.grms-committee .grms-itmes {
+    float: left;
+    margin-left: -80px;
+    padding-left: 80px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.grms-committee .grms-grid-item {
+    float: left;
+    letter-spacing: 2px;        
+    padding: 3px 20px 3px 10px;
+}
+
+.grms-shop-info-title {
+    padding: 0 5px;
+    min-width: 100px;
+}

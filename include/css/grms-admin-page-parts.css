@@ -1,0 +1,27 @@
+.newsletter-admin-content ul,
+.newsletter-admin-conten li{
+    margin: 0 0 !important;
+}
+.newsletter-post-pdf {
+    margin: -10px 0 200px 0;
+}
+
+.datetime-field,
+.place-field {
+    width: 500px;
+}
+
+.input-group .grms-label {
+    font-size: 12pt;
+    padding-top: 7px;
+}
+
+.datepicker-days th.dow:first-child,
+.datepicker-days td:first-child {
+    color: #f00;
+}
+.datepicker-days th.dow:last-child,
+.datepicker-days td:last-child {
+    color: #00f;
+}
+
