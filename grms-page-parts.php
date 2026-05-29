@@ -2,7 +2,7 @@
 /*
 Plugin Name: GRMS コミュニティWP運営のためのぺージパーツ 
 Description: GRMS ページテンプレート　入会申請するためのフォーム 等
-Version: 3.2
+Version: 7.0
 Author: Tsuneyuki Mark Imawaka
 Author URI: http://www.cetacea.jp
 License: GPLv2 or later
