@@ -202,6 +202,59 @@ function grms_send_mail_error($error)
 {
     error_log("==== MAIL DEBUG INFO =====");
     error_log(print_r($error->get_error_message(),true));
+
+    // 同一リクエスト内でエラーを保持し、CF7の応答メッセージに渡す
+    grms_mail_error_store($error->get_error_message());
+}
+
+/**
+ * SMTPエラーメッセージを静的変数で保持する
+ * $msg を渡すと保存、引数なしで呼ぶと取得
+ */
+function grms_mail_error_store($msg = null)
+{
+    static $last_error = null;
+    if ($msg !== null) {
+        $last_error = $msg;
+    }
+    return $last_error;
+}
+
+/**
+ * CF7フォームの応答メッセージにSMTPエラーを反映する
+ *
+ * ユーザーへの表示: 汎用メッセージ（詳細は error_log のみ）
+ * status が 'mail_failed' のときだけ上書きする
+ */
+add_filter('wpcf7_submission_result', 'grms_cf7_mail_error_message', 10, 2);
+function grms_cf7_mail_error_message($result, $submission)
+{
+    if (isset($result['status']) && $result['status'] === 'mail_failed') {
+        $smtp_error = grms_mail_error_store();
+        if ($smtp_error) {
+            $detail = grms_extract_smtp_detail($smtp_error);
+            $result['message'] =
+                'メールの送信に失敗しました。しばらくしてから再度お試しいただくか、直接お電話にてお問い合わせください。'
+                . ' (' . $detail . ')';
+        }
+    }
+    return $result;
+}
+
+/**
+ * SMTPエラー文字列から "Detail: ..." の部分だけを抽出する
+ * 例: "...Detail: Invalid mail domain\r\n SMTP code: 550"
+ *  → "Invalid mail domain"
+ * パターンにマッチしない場合はエラー文字列全体を返す
+ */
+function grms_extract_smtp_detail($error_string)
+{
+    // "Detail: <message>" を抽出（\r\n や末尾スペースまで）
+    if (preg_match('/Detail:\s*(.+?)(?:\\\\r\\\\n|\r\n|\r|\n|$)/i', $error_string, $matches)) {
+        return trim($matches[1]);
+    }
+    // フォールバック: \r\n を除去した全文
+    return trim(str_replace(["\r\n", "\r", "\n", "\\r\\n"], ' ', $error_string));
 }
 
 add_filter( 'wpcf7_validate_text*', 'custom_authcode_validation_filter', 20, 2 );

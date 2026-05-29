@@ -29,7 +29,7 @@ trait SMTPServerParts {
             array(
                 'field_id'  => 'username',
                 'type'      => 'text',
-                'title'     => 'ユーザー名',
+                'title'     => 'メールドメイン',
                 'attributes' => array(
                     'size' => 40
                  ),
@@ -45,7 +45,7 @@ trait SMTPServerParts {
             array(
                 'field_id'  => 'from',
                 'type'      => 'text',
-                'title'     => '送信者メールアドレス',
+                'title'     => '送信者メールアドレス(Default)',
                 'attributes' => array(
                     'size' => 40
                  ),
