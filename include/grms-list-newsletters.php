@@ -12,7 +12,7 @@ function make_grms_newsletter_link($atts, $content = null) {
         while ( have_posts() ) : the_post();
     $thumbnail_id = get_post_meta(get_the_ID(), '_thumbnail_id', true );
     $url = wp_get_attachment_url($thumbnail_id);
-    $url = str_replace( '-scaled.png', '-212x300.png',  $url );
+    $url = str_replace( '.png', '-550x550.png',  $url );
     endwhile; 
     else:
      // 何も取得されなかった
@@ -22,11 +22,7 @@ function make_grms_newsletter_link($atts, $content = null) {
     wp_reset_query();
 
     $linkbody =<<<ENDOFLINK
-<div class="gifunet-link">
-<a href="{$newsletter_link}">
-<img src="{$url}" class="gifunet-newsletter-img" alt=""/>
-		<div class="gifunet-title">{$newsletter_title}</div></a>
-  </div>
+<div class="gifunet-link"><a href="{$newsletter_link}"><img src="{$url}" class="gifunet-img" alt=""/><span class="gifunet-title">{$newsletter_title}</span></a></div>
 ENDOFLINK;
   return $linkbody;
 }
@@ -47,9 +43,9 @@ function make_grms_newsletter_list($atts, $content = null) {
         while ( have_posts() ) : the_post();
     $title = get_the_title();
     $np++;
-//    if( $np === 1) {
-//        $title .= "<div class='float-right'><font color='red'>最新号</font></div>";
-//    }
+    if( $np === 1) {
+        $title .= "<div class='float-right'><font color='red'>最新号</font></div>";
+    }
     $thumbnail_id = get_post_meta(get_the_ID(), '_thumbnail_id', true );
     $newsletter_id = get_post_meta(get_the_ID(), '_newsletter_id', true );
     $urlorg = wp_get_attachment_url($thumbnail_id);
@@ -64,8 +60,8 @@ function make_grms_newsletter_list($atts, $content = null) {
     $download = get_the_title() . ".pdf";
     $postbody .= <<<ENDOFPOST
   <div class="row">
-    <div class="col-5 newsletter-img text-center">
-       <a href="{$pdf}" target="_blank"><img src="{$url}" width="150px"></img></a>
+    <div class="col-5 newsletter-img">
+       <a href="{$pdf}" target="_blank"><img src="{$url}" width="300px"></img></a>
     </div>
     <div class="col-7 px-0">
     <H3 class="newsletter-title">{$title}</H3>
@@ -122,8 +118,8 @@ function make_grms_newsletter_backnumber($atts, $content = null) {
     $pdficon = plugins_url('/../asset/image/PDF-Icon.png',__FILE__);
     $download = get_the_title() . ".pdf";
     if( $bp%$number_of_col === 0 ) $postbody .= '<div class="row">';
-    $postbody .= '<div class="col text-center">';
-    $postbody .= '<a href="'.$pdf.'"target="_blank"><img src="'.$url.'" width="70px"></img></a>';
+    $postbody .= '<div class="col">';
+    $postbody .= '<a href="'.$pdf.'"target="_blank"><img src="'.$url.'" width="200px"></img></a>';
     $postbody .= '<a href="'.$pdf.'" download="'.$download.'">';
     $postbody .= '<div class="newsletter-backnumber-title">'.$title.'&nbsp;<i class="fas fa-download"></i></div></a>';
     $postbody .= '</div>';
