@@ -197,6 +197,7 @@ class GRMSNewsLetterMetaBox extends AdminPageFramework_MetaBox {
 
     public function grms_newsletter_attachment( $attachment_id ){ // Generate thumbnail from PDF
         if ( get_post_mime_type( $attachment_id ) === 'application/pdf' ){
+            $this->grms_newsletter_toc_fill( $attachment_id );
             $thumbnail_id = get_post_meta( $attachment_id, '_thumbnail_id', true );
             if ( $thumbnail_id ){ // delete ex thumb 
                 $ex_file = get_attached_file( $thumbnail_id );
@@ -243,10 +244,127 @@ class GRMSNewsLetterMetaBox extends AdminPageFramework_MetaBox {
             } 
         }
         if ( empty( $return ) ) $return = false;
-        
+
         return $return;
     }
-    
+
+    // PDFの「Index」ページを解析し、会報誌投稿の本文(post_content)が未入力の場合のみ
+    // 目次のドラフトを自動で流し込む。抽出結果は完全ではないため、公開前に管理者の確認を前提とする。
+    public function grms_newsletter_toc_fill( $attachment_id ) {
+        $newsletter_post_id = wp_get_post_parent_id( $attachment_id );
+        if ( ! $newsletter_post_id ) {
+            return false;
+        }
+        $newsletter = get_post( $newsletter_post_id );
+        if ( ! $newsletter || trim( wp_strip_all_tags( $newsletter->post_content ) ) !== '' ) {
+            return false; // 既に本文が入力されている場合は上書きしない
+        }
+
+        $toc_html = $this->grms_letter_toc_extract( $attachment_id );
+        if ( ! $toc_html ) {
+            return false;
+        }
+
+        // wp_update_post() は同じ投稿に対して save_post を再度発火させる。
+        // ここは save_post ハンドラ(PDFアップロード処理)の実行中に呼ばれるため、
+        // ガードなしで更新すると同一リクエスト内でアップロード処理が二重実行され、
+        // 一時ファイルが消費済みになった2回目の media_handle_upload() が失敗する。
+        remove_action( 'save_post', array( $this, 'grms_newsletter_save_post' ), 11 );
+        remove_action( 'save_post', array( $this, 'grms_newsletter_make_post' ) );
+        wp_update_post( array(
+            'ID'           => $newsletter_post_id,
+            'post_content' => $toc_html,
+        ) );
+        add_action( 'save_post', array( $this, 'grms_newsletter_save_post' ), 11, 1 );
+        add_action( 'save_post', array( $this, 'grms_newsletter_make_post' ) );
+        return true;
+    }
+
+    // PDFから「Index」見出し以降に並ぶ目次項目を抽出し、<ul><li>...</li></ul> のHTMLを返す。
+    // 見つからない、または抽出に失敗した場合は空文字を返す。
+    public function grms_letter_toc_extract( $attachment_id ) {
+        $file = get_attached_file( $attachment_id );
+        if ( ! $file || ! file_exists( $file ) ) {
+            return '';
+        }
+
+        $path = getenv( 'PATH' ) . ':/usr/local/bin:/usr/bin:/opt/homebrew/bin';
+        $exportPath = "export PATH={$path};";
+        $marker = 'Index';
+        $max_pages = 6; // 目次は通常誌面の先頭付近にあるため探索範囲を限定する
+
+        $toc_lines = array();
+        for ( $page = 1; $page <= $max_pages; $page++ ) {
+            $cmd = "{$exportPath} gs -sDEVICE=txtwrite -dFirstPage={$page} -dLastPage={$page} -o - -q " . escapeshellarg( $file ) . " 2>&1";
+            exec( $cmd, $lines, $return );
+            if ( $return !== 0 || empty( $lines ) ) {
+                continue;
+            }
+            $marker_index = null;
+            foreach ( $lines as $i => $line ) {
+                if ( trim( $line ) === $marker ) {
+                    $marker_index = $i;
+                    break;
+                }
+            }
+            if ( $marker_index !== null ) {
+                $toc_lines = array_slice( $lines, $marker_index + 1 );
+                break;
+            }
+        }
+
+        if ( empty( $toc_lines ) ) {
+            error_log( "PDF toc extract: 'Index' marker not found in first {$max_pages} pages : {$file}" );
+            return '';
+        }
+
+        $items = array();
+        foreach ( $toc_lines as $line ) {
+            $item = $this->grms_letter_toc_clean_line( $line );
+            if ( $item !== '' ) {
+                $items[] = $item;
+            }
+        }
+        if ( empty( $items ) ) {
+            return '';
+        }
+
+        $html = '<ul>';
+        foreach ( $items as $item ) {
+            $html .= '<li>' . esc_html( $item ) . '</li>';
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+
+    // 目次1行分のノイズ除去: 末尾のページ番号を切り落とし、
+    // 文字間隔の描画崩れで紛れ込んだ余分な半角スペースを取り除く。
+    private function grms_letter_toc_clean_line( $line ) {
+        // タブ・全角スペース等の連続を半角スペース1つに正規化
+        $line = preg_replace( '/[\t\x{3000}]+/u', ' ', $line );
+        $line = trim( $line );
+        if ( $line === '' ) {
+            return '';
+        }
+        // 末尾の「スペース+ページ番号(全角/半角、間にスペースが入ることもある)」を除去
+        $line = preg_replace( '/[\s0-9\x{FF10}-\x{FF19}]+$/u', '', $line );
+        $line = trim( $line );
+        if ( $line === '' ) {
+            return '';
+        }
+
+        // 一部の見出しはフォントの都合で文字ごとにスペースが挿入されるため、
+        // スペース出現率が高い(ほぼ1文字ごとに空白がある)行だけ、日本語文字間のスペースを除去する
+        $jp_class = '[\x{3000}-\x{303F}\x{3040}-\x{30FF}\x{4E00}-\x{9FFF}\x{FF00}-\x{FFEF}]';
+        preg_match_all( '/' . $jp_class . '/u', $line, $jp_matches );
+        $jp_count = count( $jp_matches[0] );
+        $space_count = substr_count( $line, ' ' );
+        if ( $jp_count > 0 && $space_count >= $jp_count * 0.5 ) {
+            $line = preg_replace( '/(?<=' . $jp_class . ') (?=' . $jp_class . ')/u', '', $line );
+        }
+        return $line;
+    }
+
     public function grms_letter_cover_generate( $attachment_id ){ // Generate thumbnail from PDF
         set_time_limit( 0 );
         $image_type = 'png';
@@ -270,14 +388,29 @@ class GRMSNewsLetterMetaBox extends AdminPageFramework_MetaBox {
         // $resize = "-thumbnail 640x640 -gravity north -extent 640x640";
         $resize = "-thumbnail ".$picwidth."x".$picwidth;
 
-        //PDFファイルから表紙をPNG抽出後、 identify コマンドで横幅を抽出
-        $imageMagick = "PATH=${PATH}:/usr/bin:/usr/local/bin; convert -density {$setReso} {$file}[0] {$resize} {$file_url}; identify -format \"%w\" {$file_url}";
-        exec( $imageMagick, $output, $return ); // Convert pdf to image
-        //$width = shell_exec( $imageMagick ); // Convert pdf to image
-        //    $width = system( $imageMagick ); // Convert pdf to image and check image width
+        // getenv('PATH') は環境によって /usr/local/bin や /opt/homebrew/bin (macOS/Homebrew) を
+        // 含まない場合があるため、代表的なパスを補って convert/identify を探索できるようにする。
+        // 単なる "PATH=...;" の代入では convert 内部から呼ばれる delegate (Ghostscript 等) の
+        // 子プロセスにPATHが継承されないため、必ず export する。
+        $path = getenv( 'PATH' ) . ':/usr/local/bin:/usr/bin:/opt/homebrew/bin';
+        $exportPath = "export PATH={$path};";
+
+        //PDFファイルから表紙をPNG抽出
+        $convertCmd = "{$exportPath} convert -density {$setReso} {$file}[0] {$resize} {$file_url} 2>&1";
+        exec( $convertCmd, $convertOutput, $convertReturn ); // Convert pdf to image
+
+        if ( $convertReturn === 0 ) {
+            // convert の出力(非推奨警告など)がwidthの値と混ざらないよう、identifyは別実行にする
+            $identifyCmd = "{$exportPath} identify -format \"%w\" {$file_url} 2>&1";
+            exec( $identifyCmd, $output, $return ); // 横幅を抽出
+        } else {
+            $return = $convertReturn;
+            $output = $convertOutput;
+        }
+
         if( $return === 0 ) {
-            $width = $output[0];
-            $gap = $maxwidth - (int)$width;
+            $width = (int) $output[0];
+            $gap = $maxwidth - $width;
 
             if( $gap > 0 ) {
                 $lest = $gap % 2;
@@ -287,16 +420,16 @@ class GRMSNewsLetterMetaBox extends AdminPageFramework_MetaBox {
                 $left_gap = (int)$gap/2;
                 $right_gap = (int)$gap/2;
                 $left_gap = $left_gap + $lest;
-                
-                $imageMagick = "PATH=${PATH}:/usr/bin:/usr/local/bin; convert {$file_url} -background none -gravity northwest -splice {$left_gap}x0 -gravity northeast -splice {$right_gap}x0 {$file_url}";
+
+                $imageMagick = "{$exportPath} convert {$file_url} -background none -gravity northwest -splice {$left_gap}x0 -gravity northeast -splice {$right_gap}x0 {$file_url} 2>&1";
                 exec( $imageMagick, $output, $return ); // Convert pdf to image and check image width
                 if ( $return !== 0 ) {
-                    error_log( "PNG resize convert is failed : {$file_url}" );
+                    error_log( "PNG resize convert is failed : {$file_url} : " . implode( ' / ', (array) $output ) );
                     $file_url = null;
                 }
             }
         } else {
-            error_log( "pdf->PNG convert is failed : {$file}[0]" );
+            error_log( "pdf->PNG convert is failed : {$file}[0] : " . implode( ' / ', (array) $output ) );
             $file_url = null;
         }
         return $file_url;
