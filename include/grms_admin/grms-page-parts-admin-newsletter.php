@@ -57,10 +57,9 @@ class GRMSNewsLetterSettings extends AdminPageFramework_PostType {
     }
     public function cell_grms_newsletter_post( $sCell, $iPostID ) { // cell_{post type}_{column key}
         $newsletter_post_id = get_post_meta($iPostID, '_newsletter_post_id', true );
-        if ( $newsletter_post_id ) {
-            $plink = get_permalink($newsletter_post_id);
-            $handle = @fopen($plink, 'r');
-            if( $handle ) {
+        if ( $newsletter_post_id && get_post_status( $newsletter_post_id ) === 'publish' ) {
+            $plink = get_permalink( $newsletter_post_id );
+            if ( $plink ) {
                 echo '<span width="100%"><a href="'.$plink.'" target="_blank">投稿</a></span>';
             }
         }
@@ -118,13 +117,11 @@ class GRMSNewsLetterMetaBox extends AdminPageFramework_MetaBox {
             echo '<span><a href="'.$pdf.'" target="_blank"><img src="'.$url.'" width="200px"></img></a></span>';
         }
         $newsletter_post_id = get_post_meta(get_the_ID(), '_newsletter_post_id', true );
-        if ( $newsletter_post_id ) {
-            $plink = get_permalink($newsletter_post_id);
-            $handle = @fopen($plink, 'r');
-            if( $handle ) {
+        if ( $newsletter_post_id && get_post_status( $newsletter_post_id ) === 'publish' ) {
+            $plink = get_permalink( $newsletter_post_id );
+            if ( $plink ) {
                 echo '<span width="100%"><a href="'.$plink.'" target="_blank">紹介投稿記事作成済</a></span>';
             }
-
         }
         submit_button('記事作成','primary','newsletter_post_make');
     }
